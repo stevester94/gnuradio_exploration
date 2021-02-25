@@ -19,5 +19,6 @@
 # Boston, MA 02110-1301, USA.
 
 install(FILES
-    steves_amplitude_modulation_testing.block.yml DESTINATION share/gnuradio/grc/blocks
+    steves_amplitude_modulation_testing.block.yml
+    steves_amplitude_modulation_amplitude_modulator.block.yml DESTINATION share/gnuradio/grc/blocks
 )
