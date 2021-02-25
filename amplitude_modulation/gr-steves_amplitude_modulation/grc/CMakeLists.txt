@@ -20,5 +20,6 @@
 
 install(FILES
     steves_amplitude_modulation_testing.block.yml
-    steves_amplitude_modulation_amplitude_modulator.block.yml DESTINATION share/gnuradio/grc/blocks
+    steves_amplitude_modulation_amplitude_modulator.block.yml
+    steves_amplitude_modulation_rectifier.block.yml DESTINATION share/gnuradio/grc/blocks
 )

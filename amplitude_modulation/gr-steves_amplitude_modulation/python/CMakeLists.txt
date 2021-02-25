@@ -33,7 +33,8 @@ GR_PYTHON_INSTALL(
     FILES
     __init__.py
     testing.py
-    amplitude_modulator.py DESTINATION ${GR_PYTHON_DIR}/steves_amplitude_modulation
+    amplitude_modulator.py
+    rectifier.py DESTINATION ${GR_PYTHON_DIR}/steves_amplitude_modulation
 )
 
 ########################################################################

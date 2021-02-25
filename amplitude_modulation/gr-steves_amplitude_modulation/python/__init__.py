@@ -34,4 +34,5 @@ except ImportError:
 # import any pure python here
 from .testing import testing
 from .amplitude_modulator import amplitude_modulator
+from .rectifier import rectifier
 #

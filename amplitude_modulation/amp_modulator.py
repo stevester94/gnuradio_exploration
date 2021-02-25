@@ -25,14 +25,16 @@ from PyQt5 import Qt
 from gnuradio import qtgui
 from gnuradio.filter import firdes
 import sip
-from gnuradio import analog
+from gnuradio import audio
 from gnuradio import blocks
+from gnuradio import filter
 from gnuradio import gr
 import sys
 import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
+from gnuradio.qtgui import Range, RangeWidget
 import steves_amplitude_modulation
 from gnuradio import qtgui
 
@@ -73,29 +75,34 @@ class amp_modulator(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 32000
+        self.lowpass_freq_Hz = lowpass_freq_Hz = 2000
 
         ##################################################
         # Blocks
         ##################################################
-        self.steves_amplitude_modulation_amplitude_modulator_0 = steves_amplitude_modulation.amplitude_modulator(samp_rate, 10, 1000)
-        self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
-            1024, #size
+        self._lowpass_freq_Hz_range = Range(0, 20000, 100, 2000, 200)
+        self._lowpass_freq_Hz_win = RangeWidget(self._lowpass_freq_Hz_range, self.set_lowpass_freq_Hz, 'lowpass_freq_Hz', "counter_slider", float)
+        self.top_grid_layout.addWidget(self._lowpass_freq_Hz_win)
+        self.steves_amplitude_modulation_rectifier_0 = steves_amplitude_modulation.rectifier()
+        self.steves_amplitude_modulation_amplitude_modulator_0 = steves_amplitude_modulation.amplitude_modulator(samp_rate, 1, 15000)
+        self.qtgui_time_sink_x_0_0_0_0_0_0 = qtgui.time_sink_f(
+            10000, #size
             samp_rate, #samp_rate
-            "", #name
+            'Passband', #name
             1 #number of inputs
         )
-        self.qtgui_time_sink_x_0.set_update_time(0.10)
-        self.qtgui_time_sink_x_0.set_y_axis(-20, 20)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.set_y_axis(-1, 1)
 
-        self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
+        self.qtgui_time_sink_x_0_0_0_0_0_0.set_y_label('Amplitude', "")
 
-        self.qtgui_time_sink_x_0.enable_tags(True)
-        self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_0.enable_autoscale(False)
-        self.qtgui_time_sink_x_0.enable_grid(False)
-        self.qtgui_time_sink_x_0.enable_axis_labels(True)
-        self.qtgui_time_sink_x_0.enable_control_panel(False)
-        self.qtgui_time_sink_x_0.enable_stem_plot(False)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.enable_tags(True)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_0_0_0_0_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.enable_grid(False)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.enable_stem_plot(False)
 
 
         labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
@@ -114,28 +121,137 @@ class amp_modulator(gr.top_block, Qt.QWidget):
 
         for i in range(1):
             if len(labels[i]) == 0:
-                self.qtgui_time_sink_x_0.set_line_label(i, "Data {0}".format(i))
+                self.qtgui_time_sink_x_0_0_0_0_0_0.set_line_label(i, "Data {0}".format(i))
             else:
-                self.qtgui_time_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_time_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_time_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_time_sink_x_0.set_line_style(i, styles[i])
-            self.qtgui_time_sink_x_0.set_line_marker(i, markers[i])
-            self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
+                self.qtgui_time_sink_x_0_0_0_0_0_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_0_0_0_0_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_0_0_0_0_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_0_0_0_0_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_0_0_0_0_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_0_0_0_0_0.set_line_alpha(i, alphas[i])
 
-        self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_win)
+        self._qtgui_time_sink_x_0_0_0_0_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0_0_0_0_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_0_0_0_0_win)
+        self.qtgui_time_sink_x_0_0_0_0_0 = qtgui.time_sink_f(
+            10000, #size
+            samp_rate, #samp_rate
+            'Filtered', #name
+            1 #number of inputs
+        )
+        self.qtgui_time_sink_x_0_0_0_0_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0_0_0_0_0.set_y_axis(-1, 1)
+
+        self.qtgui_time_sink_x_0_0_0_0_0.set_y_label('Amplitude', "")
+
+        self.qtgui_time_sink_x_0_0_0_0_0.enable_tags(True)
+        self.qtgui_time_sink_x_0_0_0_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_0_0_0_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_0_0_0_0.enable_grid(False)
+        self.qtgui_time_sink_x_0_0_0_0_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_0_0_0_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_0_0_0_0.enable_stem_plot(False)
+
+
+        labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
+            'Signal 6', 'Signal 7', 'Signal 8', 'Signal 9', 'Signal 10']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ['blue', 'red', 'green', 'black', 'cyan',
+            'magenta', 'yellow', 'dark red', 'dark green', 'dark blue']
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+        styles = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1]
+
+
+        for i in range(1):
+            if len(labels[i]) == 0:
+                self.qtgui_time_sink_x_0_0_0_0_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_time_sink_x_0_0_0_0_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_0_0_0_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_0_0_0_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_0_0_0_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_0_0_0_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_0_0_0_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_0_0_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0_0_0_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_0_0_0_win)
+        self.qtgui_time_sink_x_0_0_0_0 = qtgui.time_sink_f(
+            10000, #size
+            samp_rate, #samp_rate
+            'Baseband', #name
+            1 #number of inputs
+        )
+        self.qtgui_time_sink_x_0_0_0_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0_0_0_0.set_y_axis(-1, 1)
+
+        self.qtgui_time_sink_x_0_0_0_0.set_y_label('Amplitude', "")
+
+        self.qtgui_time_sink_x_0_0_0_0.enable_tags(True)
+        self.qtgui_time_sink_x_0_0_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_0_0_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_0_0_0.enable_grid(False)
+        self.qtgui_time_sink_x_0_0_0_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_0_0_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_0_0_0.enable_stem_plot(False)
+
+
+        labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
+            'Signal 6', 'Signal 7', 'Signal 8', 'Signal 9', 'Signal 10']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ['blue', 'red', 'green', 'black', 'cyan',
+            'magenta', 'yellow', 'dark red', 'dark green', 'dark blue']
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+        styles = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1]
+
+
+        for i in range(1):
+            if len(labels[i]) == 0:
+                self.qtgui_time_sink_x_0_0_0_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_time_sink_x_0_0_0_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_0_0_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_0_0_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_0_0_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_0_0_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_0_0_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_0_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0_0_0.pyqwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_time_sink_x_0_0_0_0_win)
+        self.low_pass_filter_0 = filter.fir_filter_fff(
+            1,
+            firdes.low_pass(
+                5,
+                samp_rate,
+                lowpass_freq_Hz,
+                1,
+                firdes.WIN_HAMMING,
+                6.76))
+        self.blocks_wavfile_source_0 = blocks.wavfile_source('/home/steven/Downloads/onclassical_demo_demicheli_geminiani_pieces_allegro-in-f-major_small-version.wav', True)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_float*1, samp_rate,True)
-        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 1, 1, 0, 0)
+        self.audio_sink_0 = audio.sink(samp_rate, '', True)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.qtgui_time_sink_x_0_0_0_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.steves_amplitude_modulation_amplitude_modulator_0, 0))
-        self.connect((self.steves_amplitude_modulation_amplitude_modulator_0, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.blocks_wavfile_source_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.audio_sink_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.qtgui_time_sink_x_0_0_0_0_0, 0))
+        self.connect((self.steves_amplitude_modulation_amplitude_modulator_0, 0), (self.qtgui_time_sink_x_0_0_0_0_0_0, 0))
+        self.connect((self.steves_amplitude_modulation_amplitude_modulator_0, 0), (self.steves_amplitude_modulation_rectifier_0, 0))
+        self.connect((self.steves_amplitude_modulation_rectifier_0, 0), (self.low_pass_filter_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "amp_modulator")
@@ -147,9 +263,18 @@ class amp_modulator(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
+        self.low_pass_filter_0.set_taps(firdes.low_pass(5, self.samp_rate, self.lowpass_freq_Hz, 1, firdes.WIN_HAMMING, 6.76))
+        self.qtgui_time_sink_x_0_0_0_0.set_samp_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0_0_0_0_0.set_samp_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0_0_0_0_0_0.set_samp_rate(self.samp_rate)
+
+    def get_lowpass_freq_Hz(self):
+        return self.lowpass_freq_Hz
+
+    def set_lowpass_freq_Hz(self, lowpass_freq_Hz):
+        self.lowpass_freq_Hz = lowpass_freq_Hz
+        self.low_pass_filter_0.set_taps(firdes.low_pass(5, self.samp_rate, self.lowpass_freq_Hz, 1, firdes.WIN_HAMMING, 6.76))
 
 
 

@@ -23,30 +23,15 @@
 import numpy
 from gnuradio import gr
 
-def sin_generator(samp_rate_Hz, amplitude, freq_Hz, phase_Hz):
-    period_sec = 1.0/freq_Hz
-    secs_per_sample = 1.0/samp_rate_Hz
-
-    time = numpy.arange(0, period_sec, secs_per_sample) 
-
-    sine_signal = amplitude * numpy.sin(2 * numpy.pi * freq_Hz * time + phase_Hz)
-
-    while True:
-        for s in sine_signal:
-            yield s
-
-class amplitude_modulator(gr.basic_block):
+class rectifier(gr.basic_block):
     """
-    docstring for block amplitude_modulator
+    docstring for block rectifier
     """
-    def __init__(self, samp_rate, amp_carrier, freq_carrier_Hz):
+    def __init__(self):
         gr.basic_block.__init__(self,
-            name="amplitude_modulator",
+            name="rectifier",
             in_sig=[numpy.float32, ],
             out_sig=[numpy.float32, ])
-
-        self.carrier_gen = sin_generator(samp_rate, 1, freq_carrier_Hz, 0)
-        self.amp_carrier = amp_carrier
 
     def forecast(self, noutput_items, ninput_items_required):
         #setup size of input_items[i] for work call
@@ -55,8 +40,9 @@ class amplitude_modulator(gr.basic_block):
 
     def general_work(self, input_items, output_items):
         for index in range(len(output_items[0])):
-            s = next(self.carrier_gen)
-            output_items[0][index] = (self.amp_carrier + input_items[0][index]) * s
+            inp = input_items[0][index]
+            output_items[0][index] = inp if inp > 0 else 0
 
         self.consume_each(len(output_items[0]))
         return len(output_items[0])
+
