@@ -5,6 +5,8 @@ category: '[steves_amplitude_modulation]'
 templates:
   imports: import steves_amplitude_modulation
   make: steves_amplitude_modulation.amplitude_modulator(${samp_rate}, ${amp_carrier}, ${freq_carrier_Hz})
+  callbacks:
+  - set_amp_carrier(${amp_carrier})
 
 #  Make one 'parameters' list entry for every parameter you want settable from the GUI.
 #     Keys include:

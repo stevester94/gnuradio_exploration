@@ -40,6 +40,7 @@ class amplitude_modulator(gr.basic_block):
     docstring for block amplitude_modulator
     """
     def __init__(self, samp_rate, amp_carrier, freq_carrier_Hz):
+        print("init")
         gr.basic_block.__init__(self,
             name="amplitude_modulator",
             in_sig=[numpy.float32, ],
@@ -52,6 +53,10 @@ class amplitude_modulator(gr.basic_block):
         #setup size of input_items[i] for work call
         for i in range(len(ninput_items_required)):
             ninput_items_required[i] = noutput_items
+
+    def set_amp_carrier(self, samp_rate):
+        print("set_amp_carrier called with: ", samp_rate)
+
 
     def general_work(self, input_items, output_items):
         for index in range(len(output_items[0])):

@@ -76,6 +76,7 @@ class amp_modulator(gr.top_block, Qt.QWidget):
         ##################################################
         self.samp_rate = samp_rate = 32000
         self.lowpass_freq_Hz = lowpass_freq_Hz = 2000
+        self.carrier_amp = carrier_amp = 1
 
         ##################################################
         # Blocks
@@ -83,8 +84,11 @@ class amp_modulator(gr.top_block, Qt.QWidget):
         self._lowpass_freq_Hz_range = Range(0, 20000, 100, 2000, 200)
         self._lowpass_freq_Hz_win = RangeWidget(self._lowpass_freq_Hz_range, self.set_lowpass_freq_Hz, 'lowpass_freq_Hz', "counter_slider", float)
         self.top_grid_layout.addWidget(self._lowpass_freq_Hz_win)
+        self._carrier_amp_range = Range(0, 10, 0.1, 1, 200)
+        self._carrier_amp_win = RangeWidget(self._carrier_amp_range, self.set_carrier_amp, 'carrier_amp', "counter_slider", float)
+        self.top_grid_layout.addWidget(self._carrier_amp_win)
         self.steves_amplitude_modulation_rectifier_0 = steves_amplitude_modulation.rectifier()
-        self.steves_amplitude_modulation_amplitude_modulator_0 = steves_amplitude_modulation.amplitude_modulator(samp_rate, 1, 15000)
+        self.steves_amplitude_modulation_amplitude_modulator_0 = steves_amplitude_modulation.amplitude_modulator(samp_rate, carrier_amp, 15000)
         self.qtgui_time_sink_x_0_0_0_0_0_0 = qtgui.time_sink_f(
             10000, #size
             samp_rate, #samp_rate
@@ -275,6 +279,13 @@ class amp_modulator(gr.top_block, Qt.QWidget):
     def set_lowpass_freq_Hz(self, lowpass_freq_Hz):
         self.lowpass_freq_Hz = lowpass_freq_Hz
         self.low_pass_filter_0.set_taps(firdes.low_pass(5, self.samp_rate, self.lowpass_freq_Hz, 1, firdes.WIN_HAMMING, 6.76))
+
+    def get_carrier_amp(self):
+        return self.carrier_amp
+
+    def set_carrier_amp(self, carrier_amp):
+        self.carrier_amp = carrier_amp
+        self.steves_amplitude_modulation_amplitude_modulator_0.set_amp_carrier(self.carrier_amp)
 
 
 
