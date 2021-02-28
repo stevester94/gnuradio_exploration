@@ -51,8 +51,11 @@ class mixer(gr.basic_block):
         
         #print("Length of output items: ", len(output_items))
 
+        length = len(output_items[0])
+        out = numpy.multiply(input_items[0][:length], input_items[1][:length])
+
         for index in range(len(output_items[0])):
-            output_items[0][index] = input_items[0][index] * input_items[1][index]
+            output_items[0][index] = out[index]
 
         self.consume_each(len(output_items[0]))
         return len(output_items[0])

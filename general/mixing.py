@@ -79,10 +79,10 @@ class mixing(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
-        self._freq2_range = Range(0, 10000, 100, 1000, 200)
+        self._freq2_range = Range(-10000, 10000, 100, 1000, 200)
         self._freq2_win = RangeWidget(self._freq2_range, self.set_freq2, 'freq2', "counter_slider", float)
         self.top_grid_layout.addWidget(self._freq2_win)
-        self._freq1_range = Range(0, 10000, 100, 1000, 200)
+        self._freq1_range = Range(-10000, 10000, 100, 1000, 200)
         self._freq1_win = RangeWidget(self._freq1_range, self.set_freq1, 'freq1', "counter_slider", float)
         self.top_grid_layout.addWidget(self._freq1_win)
         self.steves_utils_mixer_0 = steves_utils.mixer()
