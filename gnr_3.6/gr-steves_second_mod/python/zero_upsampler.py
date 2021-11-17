@@ -34,6 +34,8 @@ class zero_upsampler(gr.basic_block):
         
         self.interpolation_factor = interpolation_factor
 
+        self.counter = 0
+
 
     def forecast(self, noutput_items, ninput_items_required):
         """
@@ -55,18 +57,29 @@ class zero_upsampler(gr.basic_block):
         # print("[general_work] input_items", input_items[0].shape)
         # print("[general_work] output_items", output_items[0].shape)
 
-        num_items_to_process = int(min(len(output_items[0]), len(input_items[0])) / self.interpolation_factor)
+        #if len(output_items[0]) > len(input_items[0]):
+            #print("Output bigger than input")
+        #elif len(output_items[0]) < len(input_items[0]):
+            #print("Output smaller than input")
+       # else:
+            #print("Output and input same length")
 
-        index = 0
+        output_index = 0
+        input_index = 0
         num_consumed = 0
-        for _ in range(num_items_to_process):
-            output_items[0][index] = input_items[0][index]
-            index += 1
-            num_consumed += 1
-            for __ in range(self.interpolation_factor-1):
-                if index < num_items_to_process:
-                    output_items[0][index] = 0
-                    index += 1
+
+        while input_index < len(input_items[0]) and output_index < len(output_items[0]):
+            if self.counter % self.interpolation_factor == 0:
+                output_items[0][output_index] = input_items[0][input_index]
+                output_index += 1
+                input_index  += 1
+                num_consumed += 1
+                self.counter += 1
+            else:
+                output_items[0][output_index] = 0
+                output_index += 1
+                self.counter += 1
+
     
         self.consume(0, num_consumed)
         # self.consume_each(len(output_items[0]))
