@@ -1,0 +1,30 @@
+INCLUDE(FindPkgConfig)
+PKG_CHECK_MODULES(PC_STEVES_SECOND_MOD steves_second_mod)
+
+FIND_PATH(
+    STEVES_SECOND_MOD_INCLUDE_DIRS
+    NAMES steves_second_mod/api.h
+    HINTS $ENV{STEVES_SECOND_MOD_DIR}/include
+        ${PC_STEVES_SECOND_MOD_INCLUDEDIR}
+    PATHS ${CMAKE_INSTALL_PREFIX}/include
+          /usr/local/include
+          /usr/include
+)
+
+FIND_LIBRARY(
+    STEVES_SECOND_MOD_LIBRARIES
+    NAMES gnuradio-steves_second_mod
+    HINTS $ENV{STEVES_SECOND_MOD_DIR}/lib
+        ${PC_STEVES_SECOND_MOD_LIBDIR}
+    PATHS ${CMAKE_INSTALL_PREFIX}/lib
+          ${CMAKE_INSTALL_PREFIX}/lib64
+          /usr/local/lib
+          /usr/local/lib64
+          /usr/lib
+          /usr/lib64
+)
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(STEVES_SECOND_MOD DEFAULT_MSG STEVES_SECOND_MOD_LIBRARIES STEVES_SECOND_MOD_INCLUDE_DIRS)
+MARK_AS_ADVANCED(STEVES_SECOND_MOD_LIBRARIES STEVES_SECOND_MOD_INCLUDE_DIRS)
+
