@@ -55,6 +55,11 @@ class zero_upsampler(gr.basic_block):
         # print("[general_work] input_items", input_items[0].shape)
         # print("[general_work] output_items", output_items[0].shape)
 
+        if len(output_items[0]) > len(input_items[0]):
+            print("Output greater than input")
+        else:
+            print("Output lesser than input")
+
         num_items_to_process = int(min(len(output_items[0]), len(input_items[0])) / self.interpolation_factor)
 
         index = 0
